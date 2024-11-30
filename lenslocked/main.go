@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func pathHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,13 +52,15 @@ func contactHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	//var router Router
-	var router http.HandlerFunc
-	router = pathHandler
-	//http.HandleFunc("/", homeHandler)
-	// http.HandleFunc("/contact", contactHandler)
+
+	r := chi.NewRouter()
+
+	r.Get("/", homeHandler)
+	r.Get("/contact", contactHandler)
+	r.Get("/faq", faqHandler)
+	r.NotFound(func(w http.ResponseWriter, r *http.Request) { http.Error(w, "Page Not Found", http.StatusNotFound) })
 	fmt.Println("Starting server on my Mac :3000")
-	err := http.ListenAndServe(":3000", router)
+	err := http.ListenAndServe(":3000", r)
 	if err != nil {
 		log.Fatal(err)
 	}
